@@ -6,6 +6,36 @@
 		<link href="bootstrap/css/bootstrap.css" rel="stylesheet">
 		<link href="css/grafica.css" rel="stylesheet">
 		<title>Vota il Prof!</title>
+		
+		
+		
+		
+		
+		
+		<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript">
+// Select Province e Comuni dalla Regione. 
+function selProvCom(idRegion) {
+  $.get("select_abitativa.php", { regionid: idRegion, requestItems: 'province'}, 
+  function(dataProvince){
+    $("select[id='province']").empty();
+    var options;
+    var arrayProvince = dataProvince.split( '||');
+    for (var i = 1; i < arrayProvince.length; i++) {
+      var provincia = arrayProvince[i].split( /,/);
+      options += '<option value="' + provincia[0] + '">' + provincia[1] + '</option>';
+    }
+    $("select[id='province']").html(options);
+  });
+}
+
+</script>
+		
+		
+		
+		
+		
+		
 	</head>
 	<body>
 		<?php
@@ -28,10 +58,23 @@
 				<!-- <div style="width:100%; clear:both;">
 					<a href="login.php"> <img src="immagini/add-small.png" style="margin-top:5px; float:right"> </a> 
 				</div> -->
-				<select name="regione" class="form-control">
+				<select id="region" name="regione" class="form-control" onchange="selProvCom(this.value);">
 					<?php
 						$conn=new mysqli("localhost", "root", "", "votailprof") or die("Error");
 						$query="select * from regioni";
+						$res=$conn->query($query);
+						while($row=$res->fetch_array())
+						{
+							echo "<option value='".$row[0]."'>".$row[0]."</option>";
+						}
+						
+					?>
+				</select>
+				
+		
+				<select id="province" name="provincia" class="form-control" onchange="selCom(this.value);">
+					<?php
+						$query="select * from province where regione='abruzzo' order by provincia";
 						$res=$conn->query($query);
 						while($row=$res->fetch_array())
 						{
@@ -40,18 +83,8 @@
 						
 					?>
 				</select>
-				<select name="provincia" class="form-control">
-				<?php
-						/*http://www.mrwebmaster.it/ajax/select-dinamiche-jquery-php_7478_3.html*/
-						/*$query="select * from province where regione=";
-						$res=$conn->query($query);
-						while($row=$res->fetch_array())
-						{
-							echo "<option name='".$row[0]."'>".$row[0]."</option>";
-						}*/
-						
-					?>
-				</select>
+		
+				
 				<select name="materia" class="form-control" required>
 					<?php
 						$query="select materia from materie";
@@ -68,7 +101,7 @@
 			</form>
 		</div>
 		
-		
+	
 		
 		<script src="http://code.jquery.com/jquery.js"></script>
 	 	<script src="bootstrap/js/bootstrap.min.js"></script>
@@ -77,6 +110,9 @@
 	</body>
 
 </html>
+
+
+
 
 
 
