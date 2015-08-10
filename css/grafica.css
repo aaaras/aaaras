@@ -1,0 +1,82 @@
+body{
+/*background-color:#81DAF5;*/
+	background-color:white;
+	width:100%;
+	height:100%;
+}
+
+.container{
+	position:relative;
+}
+
+.row{
+	margin-left:-15px;
+	margin-right:-15px;
+	background-color:#FFF;
+}
+
+.titolo{
+	color: #0633AE;
+	font-size:25px;
+	text-align:center;
+	margin-top:20px;
+	margin-bottom:20px;
+}
+
+
+
+input[type="text"]{ 
+    padding: 10px;
+    font-size:17px;
+    height:50px;
+	max-width:800px;
+	margin-top:15px;
+	margin-bottom:0px;
+	color:green;
+}
+
+
+input[type="submit"]{
+	width: 100px;
+	height:46px;
+	font-size:18px;
+	color: #555;
+	background-color: #FF7800;
+	line-height: 1.33;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	border: 1px solid #cccccc;
+	padding: 4px;
+	margin-top:20px;
+}
+
+.btn-primary:hover{
+	background-color: #CF6200;
+}
+
+input {
+	display: inline-block;
+	margin-bottom: 0;
+	vertical-align: middle;
+	
+}
+
+select , option{
+	display: inline-block;
+	vertical-align: middle;
+	padding: 10px;
+    font-size:17px;
+    height:50px;
+	max-width:800px;
+	margin-top:15px;
+	margin-bottom:0px;
+}
+
+
+/*C7F600   FF7800   0633AE*/
+/*A1C700	  CF6200   05298C*/
+
+/*http://paletton.com/#uid=3291b0kQJx4rDN2InPcR-q1SAjW*/
+
+
