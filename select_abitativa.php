@@ -10,7 +10,7 @@
 						 $query = "
 					SELECT * 
 					FROM province 
-					WHERE regione = '".$regionID."' 
+					WHERE regione LIKE \"%".$regionID."%\" 
 					ORDER BY provincia";
 					echo $query;
 						 $result = mysql_query($query, $conn);

@@ -1,0 +1,62 @@
+
+.header {
+	padding: 10px;
+}
+.main_title {
+	background: #cccccc;
+	color: #ffffff;
+	padding: 10px;
+	font-size: 20px;
+	line-height: 20px;
+}
+.content {
+	padding: 10px;
+	min-height: 100px;
+}
+.footer {
+	padding: 10px;
+	text-align: right;
+}
+.footer a {
+	color: #999999;
+	text-decoration: none;
+}
+.footer a:hover {
+	text-decoration: underline;
+}
+.label_div {
+	width: 120px;
+	float: left;
+	line-height: 28px;
+}
+
+.input_container input {
+	padding: 6px 12px;
+   font-size:17px;
+   height:50px;
+	max-width:800px;
+	width:100%;
+	margin-top:15px;
+	margin-bottom:0px;
+}
+.input_container ul {
+	max-width:800px;
+	width:100%;
+	border: 1px solid #eaeaea;
+	z-index: 9;
+	background: #f3f3f3;
+	list-style: none;
+	font-size:17px;
+	padding: 6px 12px;
+}
+.input_container ul li {
+	padding: 2px;
+}
+.input_container ul li:hover {
+	background: #eaeaea;
+}
+#lista_scuole_id{
+	display: none;
+}
+
+

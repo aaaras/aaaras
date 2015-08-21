@@ -1,0 +1,36 @@
+CIAOOOOO ELEEEEE!!! 
+Allora
+
+La mia idea è:
+-pagina per inserimento prof -> richiesti nome cognome scuola e materia del prof da inserire
+-inserimento scuola -> richiamato da pagina inserimento prof, chiedo nome scuola, tipo regione(solo per filtrare le province) e provincia
+-inserimento materia -> nuova materia
+
+io ho fatto inserimento della scuola, della materia e sistemato per l'inserimento del prof
+
+la pagina di inserimento iniziale ha gli input vuoti, a meno che non sia stata inserita una scuola o una materia, in quel caso risulta già compilata con 
+i dati appena immessi. i dati vengono passati tramite l'url e si prendono con il REQUEST. 
+l'inserimento della scuola ha un auto completamento che è fatto con i file ajax_refresh e js/script.js. nel completamento esce tipo della scuola nome e provincia e
+viene aggiornato un input hidden con l'id della scuola in modo da averlo già pronto.
+quando si vorrà inserire il prof basterà fare il get dell'id e se risulterà null (bisogna provare comunque) vuol dire che è stato compilato il campo ma non è 
+stata scelta una scuola esistente (tipo si scrive "ciao mamma" ecc...)
+ok sulla prima pagina mi sembra sia tutto, niente di tanto difficile a meno che tu non volgia cimentarti con gli script.
+
+pagina per inserimento scuola
+allora qui c'è quella cosa delle tendine che se cambi regione cambiano le procince. essendo fatto da javascript php non vede i dati per cui tutto è stato preso 
+con javascript (funzione  $("#insscuola").submit(function(event) ecc..) e poi spedito con il metodo $.post("inserimentoScuola.php", {prov:provincia, tipo:tipo, nome:nome}
+alla pagina di inserimento vero e proprio. questa pagina ritorna l'id della scuola inserita alla pagina insscuola.php. in insscuola.php sempre nello script di 
+invio controllo se l'id ritornato (res) è meggiore di 0 e in quel caso mando tutti i dati alla pagina iniziale via url perchè compili i campi.
+
+
+l'inserimento della materia è molto easy, semplicemente controllo se esiste già la materia e se è nuova la inserisco ritornando il nome per url in modo che
+possa essere caricato e selezionato nella select
+
+
+per cui se vuoi cominciare c'è da fare l'inserimento del prof, prendendo i dati e buttandoli nel db.
+poi a scelta puoi decidere se cominciare con le votazioni o se fare un login (sentendo il prof) in modo da poter modificare i vari inserimenti .php che ho fatto io 
+aggiungendo l'id dell'utente per poi fare la pagina per poter modificare il nome delle scuole, dei prof ecc...
+
+
+spero si sia capito qualcosa
+bye =) =D  8D
