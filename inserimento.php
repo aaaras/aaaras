@@ -47,6 +47,22 @@
 					$idscuola=null;															//dopo aver premuto il submit se idscuola è null la scuola non era inserita nel db
 					$idscuola=$_POST['selected_id'];
 					echo $scuola;
+					
+					$nome_prof=$_POST['nome'];
+					$cognome_prof=$_POST['cognome'];
+					
+					echo($nome_prof." ".$cognome_prof);
+					
+					/** inserisce prof tabella prof */
+					
+					$query="insert into prof(id, nome, cognome) values(null, \"".$nome_prof."\", \"".$cognome_prof."\")";
+					$res=$conn->query($query);
+					$id_prof=mysql_insert_id;
+					
+					/** inserisce corrispondenza prof-scuola
+					$query="insert into prof(id, cognome, nome) values(null, \"".$nome_prof."\", \"".$cognome_prof."\")";
+					
+					*/
 			}
 			
 		?>
@@ -64,12 +80,26 @@
 		<div class="container">
 			<div class="titolo"> Nuovo professore </div>
 			<form name="inserimento" action="" method="POST">
-				<input type="text" name="nome" class="form-control" placeholder="Nome..." required>
-				<input type="text" name="cognome" class="form-control" placeholder="Cognome..." required>	
+			
+				
+				
+				
 				
 				<!-- input per nome scuola con autocompletamento -->
 				<?php
 					echo"<div class='input_container'>";
+					
+					if(isSet($_POST['nome_prof']))
+					{
+						echo("<input type='text' name='nome' class='form-control' placeholder='Nome...' value='".$_POST['nome_prof']."' required>");
+						echo("<input type='text' name='cognome' class='form-control' placeholder='Cognome...' value='".$_POST['cognome_prof']."' required>");
+						
+					}
+					else 
+					{
+						echo("<input type='text' name='nome' class='form-control' placeholder='Nome...' required>");
+						echo("<input type='text' name='cognome' class='form-control' placeholder='Cognome...' required>");
+					}
 					
 					
 					$url = $_SERVER['REQUEST_URI'];						//ottengo l'url
@@ -81,11 +111,11 @@
 						$prov=$_REQUEST['prov'];
 						$id=$_REQUEST['id'];
 						$stringa=$tipo.", ".$scuola.", ".$prov;		//stringa da impostare 
-						echo"<input type='text' name='scuola' id='scuola_id' class='form-control' value='".$stringa."' placeholder='".$stringa."' onkeyup='autocomplet()'>";
+						echo"<input type='text' name='scuola' id='scuola_id' class='form-control' value='".$stringa."' placeholder='".$stringa."' onkeyup='autocomplet()' required>";
 					}
 					else
 					{
-						echo"<input type='text' name='scuola' id='scuola_id' class='form-control' placeholder='Scuola...' onkeyup='autocomplet()'>";
+						echo"<input type='text' name='scuola' id='scuola_id' class='form-control' placeholder='Scuola...' onkeyup='autocomplet()' required>";
 					}
 					echo"<ul id='lista_scuole_id'></ul></div>";
 				
@@ -204,7 +234,7 @@
 				</select>
 			
 				
-				<!--link per inserimento materia-->
+				<!--link per inserimento materia -->
 				
 				<div style="width:100%; clear:both;">
 					<a href="insmateria.php"> <img src="immagini/add-small.png" style="margin-top:5px; float:right"> </a> 
@@ -213,11 +243,6 @@
 				<input type="submit" name="invia" class="btn btn-primary" value='Inserisci'>
 			</form>
 		</div>
-
-		
-		
-		
-		
 		
 	
 		<!--questo sarebbe il modal fade richiamato dal link commentato

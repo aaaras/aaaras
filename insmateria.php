@@ -11,10 +11,19 @@
 	<body>
 	
 		<?php
+			$nome=$_POST['nome'];
+			$cognome=$_POST['cognome'];
+			
+			echo ("<input type='hidden' name='nome_prof' value'".$nome."'/>");
+			echo ("<input type='hidden' name='cognome_prof' value'".$cognome."'/>");
+		
 			
 			if(isset($_POST['insmateria']))
 			{
 				$materia=$_POST['materiains'];
+				
+				/** nome e cognome del prof da inserire */
+				
 				
 				$conn=new mysqli("localhost", "root", "", "votailprof") or die("Error");
 				$query="select * from materie where materia='".$materia."'";
@@ -34,6 +43,8 @@
 						</script>";
 						
 					}
+					
+					
 				}
 				else
 				{
