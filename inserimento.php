@@ -59,7 +59,7 @@
 					$res=$conn->query($query);
 					$id_prof=mysql_insert_id;
 					
-					/** inserisce corrispondenza prof-scuola
+					/** inserisce corrispondenza prof-scuola --> DA METTERE ANCHE ANNO SCOLASTICO??? 
 					$query="insert into prof(id, cognome, nome) values(null, \"".$nome_prof."\", \"".$cognome_prof."\")";
 					
 					*/
@@ -79,11 +79,8 @@
 		
 		<div class="container">
 			<div class="titolo"> Nuovo professore </div>
-			<form name="inserimento" action="" method="POST">
-			
-				
-				
-				
+			<form name="inserimento" action="#" method="POST">
+
 				
 				<!-- input per nome scuola con autocompletamento -->
 				<?php
@@ -91,13 +88,15 @@
 					
 					if(isSet($_POST['nome_prof']))
 					{
+						echo("si set");
 						echo("<input type='text' name='nome' class='form-control' placeholder='Nome...' value='".$_POST['nome_prof']."' required>");
 						echo("<input type='text' name='cognome' class='form-control' placeholder='Cognome...' value='".$_POST['cognome_prof']."' required>");
 						
 					}
 					else 
 					{
-						echo("<input type='text' name='nome' class='form-control' placeholder='Nome...' required>");
+						echo("no set");
+						echo("<input type='text' name='prof_nome' class='form-control' placeholder='Nome...' required>");
 						echo("<input type='text' name='cognome' class='form-control' placeholder='Cognome...' required>");
 					}
 					

@@ -11,12 +11,36 @@
 	<body>
 	
 		<?php
-			$nome=$_POST['nome'];
-			$cognome=$_POST['cognome'];
-			
-			echo ("<input type='hidden' name='nome_prof' value'".$nome."'/>");
-			echo ("<input type='hidden' name='cognome_prof' value'".$cognome."'/>");
 		
+			echo("Dati...");
+			
+			$nome=$_POST['prof_nome'];
+			if(isSet($_POST['nome']))
+			{
+				$nome=$_POST['nome'];
+				echo("Nome prof:".$nome);
+			}
+			
+			if(isSet($_POST['cognome']))
+			{
+				$cognome=$_POST['cognome'];
+				echo($cognome);
+			}
+		
+			/*
+			$url = $_SERVER['REQUEST_URI'];						
+			$id=null;
+			if (strpos($url,'nome')) 							
+			{
+				$nome=$_POST['nome'];
+				echo ("<input type='hidden' name='nome_prof' value'".$nome."'/>");
+			}
+			
+			if (strpos($url,'cognome'))
+			{
+				$cognome=$_POST['cognome'];
+				echo ("<input type='hidden' name='cognome_prof' value'".$cognome."'/>");
+			}*/
 			
 			if(isset($_POST['insmateria']))
 			{
