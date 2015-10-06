@@ -36,6 +36,23 @@
 				<div class="col-sm-12 col-xs-12">
 					<div class="titolo"> Nuova scuola </div>		
 					
+					<?php
+						$url = $_SERVER['REQUEST_URI'];						//ottengo l'url
+						$id=null;
+						if (strpos($url,'nome')) 								//controllo se ci sono parametri
+						{
+							$nome=$_REQUEST['nome'];							//get dei parametri
+							$cognome=$_REQUEST['cognome'];
+							$materia=$_REQUEST['materia'];
+							
+							
+							echo"<input type='hidden' id='nome' value='".$nome."'>";
+							echo"<input type='hidden' id='cognome' value='".$cognome."'>";
+							echo"<input type='hidden' id='materia' value='".$materia."'>";
+						}
+					
+					?>
+
 						<!--input nome scuola-->
 						<input type="text" name="scuolains" id="scuola" class="form-control" placeholder="Scuola..." required>
 						
@@ -102,13 +119,16 @@
 				selects=document.getElementById("tipo");
 				var tipo=selects.options[selects.selectedIndex].text;
 				var nome=document.getElementById("scuola").value;
+				var nomeProf=document.getElementById("nome").value;
+				var cognomeProf=document.getElementById("cognome").value;
+				var materia=document.getElementById("materia").value;
 
 				//passaggio dei dati a pagina inserimentoScuola.php e poi ritona a inserimento passando parametri via url
 				$.post("inserimentoScuola.php", {prov:provincia, tipo:tipo, nome:nome}, function(res){		
 						if(res>0)
 						{
 							//$.post("inserimento.php", {prov:provincia, tipo:tipo, nome:nome, id:res});
-							window.location.href = "inserimento.php?prov="+provincia+"&tipo="+tipo+"&nomescuola="+nome+"&id="+res;
+							window.location.href = "inserimento.php?prov="+provincia+"&tipo="+tipo+"&nomescuola="+nome+"&id="+res+"&nomeProf="+nomeProf+"&cognome="+cognomeProf+"&materia="+materia;
 						}
 						else
 						{
@@ -122,7 +142,10 @@
 		<script>
 			function redirect()
 			{
-				window.location.href = "inserimento.php";
+				var nomeProf=document.getElementById("nome").value;
+				var cognomeProf=document.getElementById("cognome").value;
+				var materia=document.getElementById("materia").value;
+				window.location.href = "inserimento.php?nomeProf="+nomeProf+"&cognome="+cognomeProf+"&materia="+materia;
 			}
 		</script>
 		

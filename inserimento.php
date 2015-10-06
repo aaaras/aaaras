@@ -33,6 +33,9 @@
 	</head>
 	<body>
 		<?php
+		
+			session_start();
+		
 			include("connessione.php");
 			$conn=connessione();
 		?>
@@ -42,27 +45,83 @@
 		<?php
 		
 			if(isset($_POST['invia']))
-			{
-					$scuola=$_POST['scuola'];											
-					$idscuola=null;															//dopo aver premuto il submit se idscuola è null la scuola non era inserita nel db
-					$idscuola=$_POST['selected_id'];
-					echo $scuola;
-					
-					$nome_prof=$_POST['nome'];
-					$cognome_prof=$_POST['cognome'];
-					
-					echo($nome_prof." ".$cognome_prof);
-					
-					/** inserisce prof tabella prof */
-					
-					$query="insert into prof(id, nome, cognome) values(null, \"".$nome_prof."\", \"".$cognome_prof."\")";
+			{			
+				$scuola=$_POST['scuola'];											
+				$idscuola=null;																					//dopo aver premuto il submit se idscuola è null la scuola non era inserita nel db
+				$idscuola=$_POST['selected_id'];
+				
+				$nome_prof=$_POST['nome'];
+				$cognome_prof=$_POST['cognome'];
+				$materia=$_POST['materia'];
+				
+				if($idscuola!=null)
+				{
+					$query="	select 		prof.nome, prof.cognome, scuole.nome, prof_materie.materia, prof.id
+									from 		prof, prof_scuole, prof_materie, scuole
+									where 	prof.nome=\"".$nome_prof."\" 
+												and cognome=\"".$cognome_prof."\" 
+												and prof.id=prof_scuole.idProf
+												and prof_scuole.idScuola=idScuola
+												and prof_scuole.idScuola=scuole.id
+												and prof_materie.idProf=prof.id";
+				
 					$res=$conn->query($query);
-					$id_prof=mysql_insert_id;
-					
-					/** inserisce corrispondenza prof-scuola --> DA METTERE ANCHE ANNO SCOLASTICO??? 
-					$query="insert into prof(id, cognome, nome) values(null, \"".$nome_prof."\", \"".$cognome_prof."\")";
-					
-					*/
+					if($res->num_rows==0)
+					{
+						$query="insert into prof(id, nome, cognome, inserito, eliminato) values(null, \"".$nome_prof."\", \"".$cognome_prof."\", null, 0)";			//aggiungere id di utente che ha inserito
+						$res=$conn->query($query);
+						$id=$conn->insert_id;
+						$query="insert into prof_materie (idProf, materia) values (\"".$id."\", \"".$materia."\")";
+						$res=$conn->query($query);
+						
+						$query="insert into prof_scuole (idProf, idScuola, annoScolastico) values (\"".$id."\", \"".$idscuola."\", \"0\")";
+						$res=$conn->query($query);
+						
+					}
+					else
+					{
+						$i=0;
+						$trovato=0;
+						while($row=$res->fetch_array())
+						{
+							$materie[$i]=$row[3];
+							if($materie[$i]==$materia)
+							{
+								$trovato=1;
+							}
+							$i=$i+1;
+							$id=$row[4];
+						}
+						
+						
+						if($trovato==0)
+						{
+							for($i=0; $i<count($materie); $i=$i+1)
+							{
+								//echo $materie[$i]."<br>";
+								//il professore insegna più materie
+								//con alert chiedere se si vuole collegare una nuova materia
+							}
+							$query="insert into prof_materie (idProf, materia) values (\"".$id."\", \"".$materia."\")";
+							$res=$conn->query($query);
+							
+						}
+						else
+						{
+							echo "
+								<script type='text/javascript'>
+								alert('Professore già inserito');
+								</script>";
+						}
+					}
+				}
+				else
+				{
+					echo "
+					<script type='text/javascript'>
+					alert('La scuola scelta non è stata inserita da alcun utente. Inserire la scuola');
+					</script>";
+				}
 			}
 			
 		?>
@@ -82,39 +141,54 @@
 			<form name="inserimento" action="#" method="POST">
 
 				
-				<!-- input per nome scuola con autocompletamento -->
+				
 				<?php
-					echo"<div class='input_container'>";
 					
-					if(isSet($_POST['nome_prof']))
-					{
-						echo("si set");
-						echo("<input type='text' name='nome' class='form-control' placeholder='Nome...' value='".$_POST['nome_prof']."' required>");
-						echo("<input type='text' name='cognome' class='form-control' placeholder='Cognome...' value='".$_POST['cognome_prof']."' required>");
-						
-					}
-					else 
-					{
-						echo("no set");
-						echo("<input type='text' name='prof_nome' class='form-control' placeholder='Nome...' required>");
-						echo("<input type='text' name='cognome' class='form-control' placeholder='Cognome...' required>");
-					}
-					
-					
-					$url = $_SERVER['REQUEST_URI'];						//ottengo l'url
+					$url = $_SERVER['REQUEST_URI'];																//ottengo l'url
 					$id=null;
-					if (strpos($url,'tipo')) 								//controllo se ci sono parametri
+							
+					echo"<div class='input_container'>";
+				
+					if (strpos($url,'nomeProf') && $_REQUEST['nomeProf']!="" && $_REQUEST['cognome']!="") 																	//controllo se ci sono parametri per nome e cognome prof
 					{
-						$scuola=$_REQUEST['nomescuola'];					//get dei parametri
+						$nomeProf=$_REQUEST['nomeProf'];															//get di parametri professore
+						$cognomeProf=$_REQUEST['cognome'];
+					
+						echo"<input type='text' id='nome' name='nome' class='form-control' placeholder='".$nomeProf."' value='".$nomeProf."' required>";
+						echo"<input type='text' id='cognome' name='cognome' class='form-control' placeholder='".$cognomeProf."' value='".$cognomeProf."' required>";
+					}
+					else
+					{
+						echo"<input type='text' id='nome' name='nome' class='form-control' placeholder='Nome...' required>";
+						echo"<input type='text' id='cognome' name='cognome' class='form-control' placeholder='Cognome...' required>";
+					}
+					
+					
+					
+					/*input per nome scuola con autocompletamento */
+					
+					if (strpos($url,'tipo')) 																		//controllo se ci sono parametri
+					{
+						$scuola=$_REQUEST['nomescuola'];															//get dei parametri di scuola
 						$tipo=$_REQUEST['tipo'];
 						$prov=$_REQUEST['prov'];
 						$id=$_REQUEST['id'];
-						$stringa=$tipo.", ".$scuola.", ".$prov;		//stringa da impostare 
+						$stringa=$tipo.", ".$scuola.", ".$prov;												//stringa da impostare 
 						echo"<input type='text' name='scuola' id='scuola_id' class='form-control' value='".$stringa."' placeholder='".$stringa."' onkeyup='autocomplet()' required>";
 					}
 					else
 					{
-						echo"<input type='text' name='scuola' id='scuola_id' class='form-control' placeholder='Scuola...' onkeyup='autocomplet()' required>";
+						if (strpos($url,'idScuola'))
+						{
+							$id=$_REQUEST['idScuola'];
+							$stringa=$_REQUEST['scuola'];
+							echo"<input type='text' name='scuola' id='scuola_id' class='form-control' value='".$stringa."' placeholder='".$stringa."' onkeyup='autocomplet()' required>";
+						}
+						else
+						{
+							echo"<input type='text' name='scuola' id='scuola_id' class='form-control' placeholder='Scuola...' onkeyup='autocomplet()' required>";
+						}
+						
 					}
 					echo"<ul id='lista_scuole_id'></ul></div>";
 				
@@ -135,82 +209,15 @@
 				
 				?>
 				
-				
-				<!-- richiama modal dialog per inserimeto scuola. al momento preferito sviluppare in altro modo 
-					
 				<div style="width:100%; clear:both;">
-					<a href="#" data-toggle="modal" data-target="#scuola" onclick="disabilita()"> <img src="immagini/add-small.png" style="margin-top:5px; float:right"> </a> 
+					<button name="linkscuola" onclick="getDatiPerScuola()"> <img src="immagini/add-small.png" style="margin-top:5px; float:right"> </button> 
 				</div> 
-				
-				
-				-->
-				<div style="width:100%; clear:both;">
-					<a href="insscuola.php" name="linkscuola"> <img src="immagini/add-small.png" style="margin-top:5px; float:right"> </a> 
-				</div> 
-				
-				
-				
-				<!-- provincia regione e tipo scuola richieste solo in fase di inserimento scuola -->
-				
-				<!--
-				
-				<select name="tipo" id="tipo" class="form-control">
-					<?php
-						/*$tipo=null;
-						if (strpos($url,'scuola')) {
-							$tipo=$_REQUEST['tipo'];
-						}
-						$conn=new mysqli("localhost", "root", "", "votailprof") or die("Error");
-						$query="select * from tipi";
-						$res=$conn->query($query);
-						while($row=$res->fetch_array())
-						{
-							if($row[0]==$tipo)
-							{
-								echo "<option value='".$row[0]."' selected>".$row[0]."</option>";
-							}
-							else
-							{
-								echo "<option value='".$row[0]."'>".$row[0]."</option>";
-							}
-						}*/
-					?>
-				</select>			
-				<select id="region" name="regione" class="form-control" onchange="selProvCom(this.value);">
-					<?php
-						/*$query="select * from regioni";
-						$res=$conn->query($query);
-						while($row=$res->fetch_array())
-						{
-							echo "<option value='".$row[0]."'>".$row[0]."</option>";
-						}*/
-						
-					?>
-				</select>
-				
-		
-				<select id="province" name="provincia" class="form-control" onchange="selCom(this.value);">
-					<?php
-						/*$query="select * from province where regione='abruzzo' order by provincia";
-						$res=$conn->query($query);
-						while($row=$res->fetch_array())
-						{
-							echo "<option value='".$row[0]."'>".$row[0]."</option>";
-						}*/
-						
-					?>
-				</select>
-		
-				-->
-				
-			
-				
+	
+
 				<select name="materia" id="materia" class="form-control" required>
 					<?php
-						
-						$url = $_SERVER['REQUEST_URI'];						//ottengo l'url
-						$id=null;
-						if (strpos($url,'materia')) 							//controllo se ci sono parametri
+
+						if (strpos($url,'materia')) 												//controllo se ci sono parametri per materia
 						{								
 							$materia=$_REQUEST['materia'];
 						}
@@ -236,7 +243,7 @@
 				<!--link per inserimento materia -->
 				
 				<div style="width:100%; clear:both;">
-					<a href="insmateria.php"> <img src="immagini/add-small.png" style="margin-top:5px; float:right"> </a> 
+					<button name="linkmateria" onclick="getDatiPerMateria()"> <img src="immagini/add-small.png" style="margin-top:5px; float:right"> </button> 
 				</div>
 			
 				<input type="submit" name="invia" class="btn btn-primary" value='Inserisci'>
@@ -244,53 +251,38 @@
 		</div>
 		
 	
-		<!--questo sarebbe il modal fade richiamato dal link commentato
 		
-		<div id="scuola" class="modal fade">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal">&times;</button>
-						<div class="titolo"> Nuova scuola </div>
-					</div>
-					<div class="container">
-						<div class="col-sm-12 col-xs-12">
-							<input type="text" name="scuolains" class="form-control" placeholder="Scuola..." required>
-							<select name="tipoins" class="form-control">
-							<?php
-								/*$conn=new mysqli("localhost", "root", "", "votailprof") or die("Error");
-								$query="select * from tipi";
-								$res=$conn->query($query);
-								while($row=$res->fetch_array())
-								{
-									echo "<option value='".$row[0]."'>".$row[0]."</option>";
-								}*/
-							?>
-							</select>
-						</div>
-					</div>
-					<div class="modal-footer" id='mailresponsefooter'>
-						 <button type="button" data-dismiss="modal" class="btn">Close</button>
-	   					 <input type="submit" class="btn btn-primary" value='Send'> 
-					</div>
-					</form>
-				</div>
-			</div>
-			-->
 		</div>
 		
+
 		
 		
-		<!--inutile al momento-->
+		
+
 		<script>
-		function disabilita() 
+		function getDatiPerScuola()
 		{
-			document.getElementById('materia').disabled = true;
-			document.getElementById('province').disabled = true;
-			document.getElementById('region').disabled = true;
-			document.getElementById('tipo').disabled = true;
+			var nome=document.getElementById("nome").value;
+			var cognome=document.getElementById("cognome").value;
+			selects=document.getElementById("materia");
+			var materia=selects.options[selects.selectedIndex].text;
+			window.location.href = "insscuola.php?nome="+nome+"&cognome="+cognome+"&materia="+materia;
 		}
 		</script>
+		
+	
+		<script>
+		function getDatiPerMateria()
+		{
+			event.preventDefault();
+			var nome=document.getElementById("nome").value;
+			var cognome=document.getElementById("cognome").value;
+			var idScuola=document.getElementById("selected_id").value;
+			var scuola=document.getElementById("scuola_id").value;			
+			window.location.href = "insmateria.php?nome="+nome+"&cognome="+cognome+"&id="+idScuola+"&scuola="+scuola;
+		}
+		</script>
+	
 	
 		<script src="http://code.jquery.com/jquery.js"></script>
 	 	<script src="bootstrap/js/bootstrap.min.js"></script>
@@ -301,22 +293,3 @@
 </html>
 
 
-
-
-
-
-
-<!--
-<div class="input-group input-group-lg">
-					<span class="input-group-addon" style="background-color:#0633AE" id="sizing-addon1"></span>					<input type="password" class="form-control" placeholder="Cognome" aria-describedby="sizing-addon1" required>
-				</div>
-				<br>
-				<div class="input-group input-group-lg">
-					<span class="input-group-addon" style="background-color:#0633AE" id="sizing-addon1"></span>
-					<input type="password" class="form-control" placeholder="Scuola" aria-describedby="sizing-addon1" required>
-				</div>
-				<div style="width:100%; clear:both;">
-					<a href="login.php"> <img src="immagini/add-small.png" style="margin-top:5px; float:right"> </a>
-				</div>
-				
-				-->

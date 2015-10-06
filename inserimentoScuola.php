@@ -12,13 +12,11 @@
 		//aggiungere codice utente una volta che si è autenticato
 		$query="insert into scuole(id, nome, provincia, tipo, inserito) values(null, \"".$nomescuola."\", \"".$provincia."\", \"".$tipo."\", \"1\")";
 		$res=$conn->query($query);
-		$return=mysql_insert_id;					//ritorna id dell'ultima tupla inserita
+		$return=$conn->insert_id;					//ritorna id dell'ultima tupla inserita
 		//inserire controllo con affected rows
 		
 	}
 
-
-	 
 	 print_r($return);
 
 ?>

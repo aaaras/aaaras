@@ -10,11 +10,37 @@
 	</head>
 	<body>
 	
+	
+		<?php
+			$url = $_SERVER['REQUEST_URI'];						//ottengo l'url
+			$id=null;
+			if (strpos($url,'nome')) 								//controllo se ci sono parametri
+			{
+				$nome=$_REQUEST['nome'];							//get dei parametri
+				$cognome=$_REQUEST['cognome'];
+				$idScuola=$_REQUEST['id'];
+				$scuola=$_REQUEST['scuola'];
+				
+				echo"<input type='hidden' id='nome' value='".$nome."'>";
+				echo"<input type='hidden' id='cognome' value='".$cognome."'>";
+				echo"<input type='hidden' id='idScuola' value='".$idScuola."'>";
+				echo"<input type='hidden' id='scuola' value='".$scuola."'>";
+							
+				
+				
+			}
+		
+		?>
+	
+	
+	
+	
+	
 		<?php
 		
 			echo("Dati...");
 			
-			$nome=$_POST['prof_nome'];
+			/*$nome=$_POST['prof_nome'];
 			if(isSet($_POST['nome']))
 			{
 				$nome=$_POST['nome'];
@@ -25,7 +51,7 @@
 			{
 				$cognome=$_POST['cognome'];
 				echo($cognome);
-			}
+			}*/
 		
 			/*
 			$url = $_SERVER['REQUEST_URI'];						
@@ -63,7 +89,7 @@
 					{
 						echo"
 						<script type='text/javascript'>
-							window.location.href = \"inserimento.php?materia=".$materia."\";
+							window.location.href = \"inserimento.php?materia=".$materia."&nomeProf=".$nome."&cognome=".$cognome."&idScuola=".$idScuola."&scuola=".$scuola."\";
 						</script>";
 						
 					}
@@ -95,10 +121,15 @@
 			</div>
 		</form>
 
+		
 		<script>
 			function redirect()
 			{
-				window.location.href = "inserimento.php";
+				var nomeProf=document.getElementById("nome").value;
+				var cognomeProf=document.getElementById("cognome").value;
+				var idScuola=document.getElementById("idScuola").value;
+				var scuola=document.getElementById("scuola").value;
+				window.location.href = "inserimento.php?nomeProf="+nomeProf+"&cognome="+cognomeProf+"&idScuola="+idScuola+"&scuola="+scuola;
 			}
 		</script>
 
